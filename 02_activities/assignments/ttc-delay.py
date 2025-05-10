@@ -82,5 +82,28 @@ frequent_stop_hist.set_ylabel('Number of Delays',
                               labelpad=20 # shifting axis label left for readability
                               )
 
+# labels for each bar
+bar_labels = ['Station', 'Station', 'Station', 'Loop', 'Loop', 'Intersection', 'Loop', 'Loop', 'Facility', 'Intersection']
+
+from collections import defaultdict
+
+category_heights = defaultdict(float)
+category_x = {}
+
+# Aggregate height by category (x-value)
+for patch in frequent_stop_hist.patches:
+    x_center = patch.get_x() + patch.get_width() / 2
+    category = round(x_center, 5)  # key by x-center
+    category_heights[category] += patch.get_height()
+    category_x[category] = patch.get_x() + patch.get_width() / 2
+
+# Apply labels on top of full bars
+for (x_center, height), label in zip(category_heights.items(), bar_labels):
+    frequent_stop_hist.text(
+        category_x[x_center], height + 0.5, label,
+        ha='center', va='bottom', fontsize=9
+    )
+
 plt.xticks(fontsize=9) # adjusting the font size of the ticks for readability
+plt.tight_layout()
 plt.show()
